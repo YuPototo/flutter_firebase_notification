@@ -5,6 +5,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseService.initialize();
   FirebaseService.onBackgroundMessage();
+  await FirebaseService.setupFlutterNotifications();
+
   runApp(const MyApp());
 }
 
