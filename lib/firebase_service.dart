@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -26,6 +28,10 @@ late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 bool isFlutterLocalNotificationsInitialized = false;
+
+/// Streams are created so that app can respond to notification-related events
+final StreamController<String?> selectNotificationStream =
+    StreamController<String?>.broadcast();
 
 class FirebaseService {
   static Future<void> initialize() async {
@@ -86,6 +92,23 @@ class FirebaseService {
       sound: true,
     );
 
+    const InitializationSettings initSettings = InitializationSettings(
+        android: AndroidInitializationSettings("@mipmap/ic_launcher"));
+
+    await flutterLocalNotificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
+        print('onDidReceiveNotificationResponse');
+
+        if (notificationResponse.notificationResponseType ==
+            NotificationResponseType.selectedNotification) {
+          print("NotificationResponseType.selectedNotification");
+          selectNotificationStream.add(notificationResponse.payload);
+        }
+      },
+    );
+
     isFlutterLocalNotificationsInitialized = true;
   }
 
@@ -110,5 +133,15 @@ class FirebaseService {
         ),
       );
     }
+  }
+
+  // todo: add type signature for callback
+  static void configureSelectNotificationSubject(
+      void Function(String?) callback) {
+    selectNotificationStream.stream.listen(callback);
+  }
+
+  static void disposeSelectNotificationSubject() {
+    selectNotificationStream.close();
   }
 }

@@ -41,6 +41,19 @@ class _ScreenOneState extends State<ScreenOne> {
     super.initState();
 
     FirebaseService.onMessage();
+
+    FirebaseService.configureSelectNotificationSubject((String? payload) {
+      // todo: check payload before navigate
+      print('configureSelectNotificationSubject callback');
+      print('payload $payload');
+      Navigator.of(context).pushNamed('/screen_2');
+    });
+  }
+
+  @override
+  void dispose() {
+    FirebaseService.disposeSelectNotificationSubject();
+    super.dispose();
   }
 
   @override
@@ -91,7 +104,7 @@ class ScreenTwo extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/');
+            Navigator.pop(context);
           },
           child: const Text('Go To Screen 1'),
         ),
