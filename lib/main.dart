@@ -51,6 +51,12 @@ class _ScreenOneState extends State<ScreenOne> {
 
       if (payload != null) {
         final payloadMap = jsonDecode(payload);
+
+        /* 
+          We can conditionally redirect user to different screen based on the payload.
+          Payload is FCM's data property.
+          https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+        */
         if (payloadMap["openScreen"] == 'performanceReport') {
           print('navigate to user performance screen');
           Navigator.of(context).pushNamed('/screen_2');
