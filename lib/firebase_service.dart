@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -116,6 +117,7 @@ class FirebaseService {
     print('showFlutterNotification()');
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
+
     if (notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
         notification.hashCode,
@@ -131,11 +133,11 @@ class FirebaseService {
             icon: 'launch_background',
           ),
         ),
+        payload: jsonEncode(message.data),
       );
     }
   }
 
-  // todo: add type signature for callback
   static void configureSelectNotificationSubject(
       void Function(String?) callback) {
     selectNotificationStream.stream.listen(callback);

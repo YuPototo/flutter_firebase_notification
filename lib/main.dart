@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import './firebase_service.dart';
 
@@ -46,7 +48,14 @@ class _ScreenOneState extends State<ScreenOne> {
       // todo: check payload before navigate
       print('configureSelectNotificationSubject callback');
       print('payload $payload');
-      Navigator.of(context).pushNamed('/screen_2');
+
+      if (payload != null) {
+        final payloadMap = jsonDecode(payload);
+        if (payloadMap["openScreen"] == 'performanceReport') {
+          print('navigate to user performance screen');
+          Navigator.of(context).pushNamed('/screen_2');
+        }
+      }
     });
   }
 
